@@ -1,0 +1,34 @@
+#!/bin/sh
+
+IFS="
+"
+
+for file in `find . -maxdepth 1 | sort`; do
+
+	file=`basename "$file"`
+
+	result="`echo $file \\
+| sed -e 's/-shit//' \\
+| sed -e 's/(//' \\
+| sed -e 's/)//' \\
+| tr '[A-Z]' '[a-z]' \\
+| sed -e 'y/АБВГҐДЕЄЖЗИІЇЙКЛМНОПРСТУФХЦЧШЩЬЮЯ/абвгґдеєжзиіїйклмнопрстуфхцчшщьюя/' \\
+| tr ' ' '_' \\
+| tr -d \' \\
+| tr -d \, \\
+| sed -e 's/_\./\./' \\
+| sed 's/\._/_/' \\
+| sed -e 's/_-_/-/' \\
+| sed -e 's/--_/-/' \\
+| sed -e 's/[\!\+]//' \\
+| sed -e 's/\&/and/' \\
+| perl -ne '$_=~s/^(\d\d)_/$1-/; print \"$_\n\"' \\
+| sed -e 's/_-_/-/'`"
+
+	if [ "$file" != "$result" ]; then
+		echo "$result"
+		mv "$file" "$result"
+	fi
+
+done
+
