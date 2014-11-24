@@ -1,0 +1,71 @@
+#!/usr/bin/perl -w -CAS
+
+use strict;
+use warnings;
+
+my $repo = '/repos/journal';
+my $journal = "$repo/servers.log";
+
+chdir($repo) || die "Can not chdir to repository! ($!)\n";
+
+my $whoami = `whoami`; chomp($whoami);
+my %admin = (
+  'admin' => 'user1',
+  'oracle' => 'user2',
+);
+my $admin;
+if (defined $admin{$whoami}) {
+  $admin = $admin{$whoami};  
+} else {
+  die "Unknown admin! ($whoami)";
+}
+
+my $server;
+if (defined $ARGV[0]) {
+  $server = $ARGV[0];
+} else {
+  print "server: "; $server = <STDIN> || die "No server!\n"; chomp($server);
+}
+
+my $comment;
+if (defined $ARGV[1]) {
+  $comment = $ARGV[1];
+} else {
+  print "comment: "; $comment = <STDIN> || die "No comment!\n"; chomp($comment);
+}
+my @comment = ($comment =~ /(.{1,54})/g);
+
+my $time = `date +"%d.%m.%Y %H:%M"`; chomp($time);
+
+system('svn update');
+
+my $id;
+my $lastchar;
+my $prefix = '';
+
+open (JOURNAL,"<:utf8",$journal);
+
+while(<JOURNAL>) {
+  $lastchar = substr($_,-1,1);
+  if (/^ *?(\d{1,4}) /) {
+    $id = int($1);
+  }
+}
+
+if ($lastchar ne "\n") {
+  print "Including LF first\n";
+  $prefix = "\n";
+}
+
+close(JOURNAL);
+die "Can not find last ID!\n" if (!defined $id);
+
+$id++;
+open (JOURNAL,">>:utf8",$journal);
+foreach(@comment) {
+  print JOURNAL sprintf("$prefix%-4d %16s %-11.11s %-54.54s %11.11s\n",$id,$time,$server,$_,$admin);
+}
+close(JOURNAL);
+
+system("svn -m '$admin\@$server' commit");
+
