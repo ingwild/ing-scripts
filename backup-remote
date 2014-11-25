@@ -1,0 +1,49 @@
+#!/bin/bash
+#
+# rsync based backup
+#
+
+DATE=`date "+%y%m%d"`
+RSYNC="/usr/bin/rsync"
+HOME="/backup/remote"
+OPTS="-aH --numeric-ids"
+export USER="backup"
+export RSYNC_PASSWORD="secret"
+
+get-rsync-opts() {
+
+  if [ $VERBOSE == 1 ]; then
+    OPTS="$OPTS -v"
+  fi
+
+  if [ $DELETE == 1 ]; then
+    OPTS="$OPTS --delete"
+  fi
+
+}
+
+backup-host() {
+
+  HOST="host"
+  ORG="/root/"
+  DST="$HOME/$HOST"
+  echo -e "\n$HOST\n"
+  mkdir -p "$DST"
+
+  (
+    get-rsync-opts
+    OPTS="$OPTS --exclude proc/ --exclude sys/ --exclude install/"
+    $RSYNC $OPTS "rsync://$HOST$ORG" "$DST"
+  )
+
+}
+
+echo `date` BEGIN >>/var/log/backup-remote.log
+
+export VERBOSE=0
+export DELETE=1
+
+backup-host
+
+echo `date` END >>/var/log/backup-remote.log
+
