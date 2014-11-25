@@ -1,0 +1,23 @@
+#!/bin/bash
+
+DATE=`date "+%y%m%d"`
+HOST=`uname -n`
+BHOME="/backup"
+
+umask 0077
+
+if [ ! -d "$BHOME" ]; then
+  mkdir -p "$BHOME"
+fi
+
+for MP in / /boot ; do
+  if [ $MP == "/" ]; then
+    NAME="root"
+  else
+    NAME=`basename $MP`
+  fi
+  cd $MP
+  rm -f "$BHOME"/$HOST-$NAME-??????.tar.xz
+  tar -c --one-file-system -J -f "$BHOME"/$HOST-$NAME-$DATE.tar.xz . 2>/dev/null
+done
+
