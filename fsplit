@@ -1,0 +1,27 @@
+#!/bin/sh
+
+if [ -n "$1" ]; then
+  CUE="$1"
+else
+  CUE=`find . -type f -name \*.cue | head -n 1`
+fi
+
+if [ -n "$2" ]; then
+  IN="$2"
+else
+  IN=`find . -type f -name \*.flac | head -n 1`
+fi
+
+echo $CUE
+echo $IN
+
+shnsplit \
+  -f "$CUE" \
+  -o flac \
+  -t '%n-%t' \
+  -m '_' \
+  -d . \
+  "$IN" &&
+
+cuetag "$CUE" "??-*.flac"
+
