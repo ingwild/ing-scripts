@@ -1,0 +1,33 @@
+#!/bin/bash
+#
+# adduser replacement script
+#
+
+GROUP='monstersinc'
+
+echo -n "username: "
+if [ $# == 0 ] ; then
+  read USER
+else
+  USER=$1
+  echo $USER
+fi
+
+if [ "$USER" == '' ] ; then
+  echo Empty username!
+  exit 1
+fi
+
+read -p "first name: " RN1
+read -p "last name: " RN2
+
+MAILDIR="/home/mail/$USER"
+
+useradd -g $GROUP -s /bin/false -d /home/$USER -c "$RN1 $RN2" $USER
+
+mkdir $MAILDIR
+chown $USER:$GROUP $MAILDIR
+chmod 0700 $MAILDIR
+
+passwd $USER
+
