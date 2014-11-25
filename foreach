@@ -1,0 +1,13 @@
+#!/usr/bin/perl
+
+if (!defined(@ARGV[0])) {
+  die "$0: Specify a command.\n";
+}
+
+foreach (<STDIN>) {
+  chomp($_);
+  $result = `@ARGV $_`;
+  chomp($result);
+  print $_,"\t",$result,"\n";
+}
+
