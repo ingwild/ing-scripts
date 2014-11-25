@@ -1,0 +1,11 @@
+#!/usr/bin/perl
+
+while(<>) {
+  chomp;
+  $str{$_}++;
+}
+
+foreach(keys(%str)) {
+  print "$_\t$str{$_}\n";
+}
+
