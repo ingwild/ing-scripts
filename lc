@@ -5,30 +5,35 @@ IFS="
 
 for file in `find . -maxdepth 1 | sort`; do
 
-	file=`basename "$file"`
+  file=`basename "$file"`
 
-	result="`echo $file \\
-          | sed -e 's/-shit//' \\
-          | sed -e 's/(//' \\
-          | sed -e 's/)//' \\
-          | tr '[A-Z]' '[a-z]' \\
-          | sed -e 'y/АБВГҐДЕЄЖЗИІЇЙКЛМНОПРСТУФХЦЧШЩЬЮЯ/абвгґдеєжзиіїйклмнопрстуфхцчшщьюя/' \\
-          | tr ' ' '_' \\
-          | tr -d \' \\
-          | tr -d \, \\
-          | sed -e 's/_\./\./' \\
-          | sed 's/\._/_/' \\
-          | sed -e 's/_-_/-/' \\
-          | sed -e 's/--_/-/' \\
-          | sed -e 's/[\!\+]//' \\
-          | sed -e 's/\&/and/' \\
-          | perl -ne '$_=~s/^(\d\d)_/$1-/; print \"$_\n\"' \\
-          | sed -e 's/_-_/-/'`"
+  result1="`echo $file \\
+   | sed -e 's/(//' \\
+   | sed -e 's/)//' \\
+   | tr '[A-Z]' '[a-z]' \\
+   | sed -e 'y/АБВГҐДЕЄЖЗИІЇЙКЛМНОПРСТУФХЦЧШЩЬЮЯ/абвгґдеєжзиіїйклмнопрстуфхцчшщьюя/' \\
+   | tr ' ' '_' \\
+   | tr -d \' \\
+   | tr -d \, \\
+   | sed -e 's/_\./\./' \\
+   | sed 's/\._/_/' \\
+   | sed -e 's/_-_/-/' \\
+   | sed -e 's/--_/-/' \\
+   | sed -e 's/[\!\+]//' \\
+   | sed -e 's/\&/and/' \\
+   | perl -ne '$_=~s/^(\d\d)_/$1-/; print \"$_\n\"' \\
+   | sed -e 's/_-_/-/'`"
 
-	if [ "$file" != "$result" ]; then
-		echo "$result"
-		mv "$file" "$result"
-	fi
+  if [ -n "$1" ]; then
+    result2="`echo $result1 | sed -e \"s/$1//\"`"
+  else
+    result2="$result1"
+  fi
+
+  if [ "$file" != "$result2" ]; then
+    echo "$result2"
+    mv "$file" "$result2"
+  fi
 
 done
 
