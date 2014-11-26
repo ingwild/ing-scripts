@@ -1,0 +1,9 @@
+#!/bin/sh
+
+if [ -n "$1" ]; then
+  DIR="/home/$1"
+  mkdir "$DIR"
+  chown $1:1000 "$DIR"
+  chmod 0700 "$DIR"
+fi
+

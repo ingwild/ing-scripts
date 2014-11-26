@@ -1,0 +1,10 @@
+#!/usr/bin/perl
+
+foreach (`getent passwd | cut -f1,3 -d: | sort | uniq | grep -v guest | grep -v test`) {
+  chomp;
+  ($username,$uid) = /^(.*):(.*)$/;
+  if (($uid >=1000) && ($uid <1100)) {
+    print "$username\n";
+  }
+}
+
