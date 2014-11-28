@@ -8,15 +8,15 @@ for file in `find . -maxdepth 1 | sort`; do
   file=`basename "$file"`
 
   result1="`echo $file \\
-   | sed -e 's/(//' \\
-   | sed -e 's/)//' \\
+   | sed -e 's/(.*)//' \\
+   | sed -e 's/\[.*\]//' \\
    | tr '[A-Z]' '[a-z]' \\
    | sed -e 'y/АБВГҐДЕЄЖЗИІЇЙКЛМНОПРСТУФХЦЧШЩЬЮЯЁЪЫЭЎ/абвгґдеєжзиіїйклмнопрстуфхцчшщьюяёъыэў/' \\
    | tr ' ' '_' \\
    | tr -d \' \\
    | tr -d \, \\
    | sed -e 's/_\./\./' \\
-   | sed 's/\._/_/' \\
+   | sed -e 's/\._/_/' \\
    | sed -e 's/_-_/-/' \\
    | sed -e 's/--_/-/' \\
    | sed -e 's/[\!\+]//' \\
