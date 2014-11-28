@@ -15,8 +15,10 @@ for file in `find . -maxdepth 1 | sort`; do
    | tr ' ' '_' \\
    | tr -d \' \\
    | tr -d \, \\
+   | sed -e 's/__/_/' \\
    | sed -e 's/_\./\./' \\
    | sed -e 's/\._/_/' \\
+   | sed -e 's/\.-/-/' \\
    | sed -e 's/_-_/-/' \\
    | sed -e 's/--_/-/' \\
    | sed -e 's/[\!\+]//' \\
