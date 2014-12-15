@@ -23,5 +23,5 @@ shnsplit \
   -d . \
   "$IN" &&
 
-cuetag "$CUE" "??-*.flac"
+cuetag "$CUE" ??-*.flac
 
