@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 PARENT=$(cat /var/run/crond.pid)
 DELTA=180
@@ -7,7 +7,8 @@ NOW=$(date +%s)
 IFS='
 '
 for S in $(ps -o pid,start --no-headers --ppid $PARENT); do
-  IFS=' ' read PID START <<<$S
+  PID="$(echo $S | cut -d ' ' -f 1)"
+  START="$(echo $S | cut -d ' ' -f 2)"
   if [ $(($NOW-$(date -d $START +%s))) -gt $DELTA ]; then
     pkill -P $PID
   fi
