@@ -1,0 +1,53 @@
+#!/usr/bin/perl -w
+
+use strict;
+
+use DateTime;
+use DateTime::Event::Sunrise;
+
+my $lat = 50;
+my $lon = 30;
+my $alt_sun = -0.833;
+my $alt_ctw = -6;
+my $alt_ntw = -12;
+my $alt_atw = -18;
+
+my $event;
+my $alt;
+
+if (defined $ARGV[0]) {
+    $event = $ARGV[0];
+    if ($event eq 'dawn') {
+        $alt = $alt_ctw;
+    } elsif ($event eq 'sunrise') {
+        $alt = $alt_sun;
+    } elsif ($event eq 'sunset') {
+        $alt = $alt_sun;
+    } elsif ($event eq 'dusk') {
+        $alt = $alt_ctw;
+    } else {
+        die "Unrecognized parameter! ($ARGV[0])\n";
+    }
+} else {
+    die "Usage: $0: <dawn|sinrise|sunset|dusk> [minutes]\n";
+}
+
+my $e = DateTime::Event::Sunrise->new(latitude=>$lat,longitude=>$lon,altitude=>$alt,iteration=>1);
+my $tz = DateTime::TimeZone->new(name=>'local')->name();
+my $today = DateTime->now->set_time_zone($tz)->truncate(to=>'day');
+
+my $m;
+if (($event eq 'dawn') || ($event eq 'sunrise')) {
+    $m = $e->sunrise_datetime($today);
+} else {
+    $m = $e->sunset_datetime($today);
+}
+
+if ((defined $ARGV[1]) && ($ARGV[1] eq 'minutes')) {
+    print $m->subtract_datetime($today)->in_units($ARGV[1]);
+} else {
+    print $m->hms;
+}
+
+print "\n";
+
